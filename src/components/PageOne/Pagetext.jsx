@@ -9,24 +9,37 @@ const Pagetext = () => {
 
     const mouseEnter = ()=>{
       hoverRef.current.style.transform = "translate(-50%, -50%) scale(1)"
+      hoverRef.current.style.transition = ".1s all "
     }
 
     const mouseLeave = ()=>{
         hoverRef.current.style.transform = "translate(-50%, -50%) scale(0)"
     }
 
-    const mouseMove = (e)=>{
-      const xvalue = e.clientX -  parentRef.current.getBoundingClientRect().x
-      const yvalue = e.clientY - parentRef.current.getBoundingClientRect().y
+    const xValueRef = useRef(0);
+    const yValueRef = useRef(0);
 
-      hoverRef.current.style.left = xvalue + "px"
-      hoverRef.current.style.top = yvalue + "px"
-    }
+    const mouseMove = (e) => {
+      const xvalue = e.clientX - parentRef.current.getBoundingClientRect().x;
+      const yvalue = e.clientY - parentRef.current.getBoundingClientRect().y;
+  
+      // Update the refs
+      xValueRef.current = xvalue;
+      yValueRef.current = yvalue;
+  
+      // Trigger the GSAP animation
+      gsap.to(hoverRef.current, {
+        top: yValueRef.current,
+        left: xValueRef.current,
+        ease: "slow(0.7,0.7,false)"
+        
+      });
+    };
 
 
   return (
     <div ref={parentRef} onMouseEnter={mouseEnter} onMouseLeave={mouseLeave} onMouseMove={(e)=>{mouseMove(e)}} className='font-["General Sans"] relative'>
-        <div ref={hoverRef} className=" overflow-hidden imgdiv h-[20vw] z-10 w-[20vw] bg-red-500 absolute -translate-x-1/2 -translate-y-1/2 scale-0">
+        <div ref={hoverRef} className=" p-1 overflow-hidden imgdiv h-[20vw] z-10 w-[30vw] bg-stone-500 absolute -translate-x-1/2 -translate-y-1/2 scale-0">
             <div className="h-full w-full bg-slate-700">
                 <img className="h-full w-full object-cover" src="https://images.unsplash.com/photo-1721448287885-d37bdc7c0104?q=80&w=1447&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" />
                 <img className="h-full w-full object-cover" src="https://images.unsplash.com/photo-1721448288287-6dc6ce150e40?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" />
