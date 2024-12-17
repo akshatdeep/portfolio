@@ -3,6 +3,7 @@ import React, { useRef } from 'react'
 import 'remixicon/fonts/remixicon.css'
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap"
+import { Link } from 'react-router-dom';
 const NavBar = () => {
 
 
@@ -25,10 +26,10 @@ const NavBar = () => {
 
 
   return (
-    <div className='w-screen font-["General Sans"] py-[2vw] px-[2vw] flex items-center justify-between'>
+    <div className='w-screen font-["General Sans"] py-[2vw] lg:px-[2vw] flex items-center justify-between px-[4vw]'>
         <div className='logo uppercase '>
           <div className="animetionemem w-fit  overflow-hidden">
-          <h1 ref={navelem} className='text-xl font-semibold translate-y-[100%] '>Akshat Deep Astik</h1>
+          <Link to='/'><h1 ref={navelem} className='text-xl font-semibold translate-y-[100%] '>Akshat Deep Astik</h1></Link>
           </div>
         </div>
         <div className='menu'>

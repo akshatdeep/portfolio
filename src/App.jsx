@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import LandingPage from "./components/LandingPage/LandingPage";
-import PageOne from "./components/PageOne/PageOne";
-import About from "./components/About/About";
-import Footer from "./components/Footer/Footer";
 import LocomotiveScroll from "locomotive-scroll";
 import gsap from "gsap";
+import { Route, Routes } from "react-router-dom";
+import ViewProject from "./components/ViewProject/ViewProject";
+import NavBar from "./components/NavBar/NavBar";
+import projects from "./_mock/mockProject";
 
 function App() {
   const scrollRef = useRef(null);
@@ -15,8 +16,7 @@ function App() {
     y: 0,
   });
 
-  // console.log(mousevalue)
-
+  // Track mouse movement
   useEffect(() => {
     const MouseMove = (e) => {
       setmousevalue({ x: e.clientX, y: e.clientY });
@@ -28,6 +28,7 @@ function App() {
     };
   }, [mousevalue]);
 
+  // GSAP for smooth dot animation
   useEffect(() => {
     gsap.to(dotRef.current, {
       x: mousevalue.x,
@@ -35,6 +36,7 @@ function App() {
     });
   }, [mousevalue]);
 
+  // Locomotive scroll initialization
   useEffect(() => {
     const scroll = new LocomotiveScroll({
       el: scrollRef.current,
@@ -45,16 +47,21 @@ function App() {
       if (scroll) scroll.destroy();
     };
   }, []);
+
   return (
-    <div ref={scrollRef} className="main bg-black -z-10">
+    <div ref={scrollRef} className="main h-full w-full bg-black -z-10 overflow-x-hidden text-white">
       <div
         ref={dotRef}
-        className="h-[20px] w-[20px] bg-white rounded-full absolute top-0 left-0 z-50 translate-x-[]"
+        className="h-[20px] w-[20px] bg-white mix-blend-difference rounded-full absolute top-0 left-0 z-50 translate-x-[]"
       ></div>
-      <LandingPage />
-      <PageOne />
-      <About />
-      <Footer />
+      <NavBar />
+      {/* Routes for pages that change based on the path */}
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        
+          <Route path="/viewproject" element={<ViewProject projects={projects}/>}/>
+         
+      </Routes>
     </div>
   );
 }

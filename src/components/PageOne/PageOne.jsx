@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 import Pagetext from "./Pagetext";
+import About from "../About/About";
 
 const PageOne = () => {
   const elemRefs = useRef([]);
@@ -22,7 +23,7 @@ const PageOne = () => {
 
 
   return (
-    <div className="w-screen mt-[3vw] min-h-screen bg-black pt-[9vw] pb-[2vw] text-white pl-[2vw] pr-[10vw] font-['General Sans']">
+    <div className=" w-screen mt-[6rem] pt-[9vw] pb-[2vw] text-white pl-[2vw] pr-[10vw] font-['General Sans'] mt-[19vw] lg:mt-[7rem]">
       <Pagetext/>
       </div>
   );

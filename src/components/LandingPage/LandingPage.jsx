@@ -2,6 +2,9 @@ import React, { useRef } from "react";
 import NavBar from "../NavBar/NavBar";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import PageOne from "../PageOne/PageOne";
+import About from "../About/About";
+import Footer from "../Footer/Footer";
 
 const LandingPage = () => {
   const h1Ref = useRef();
@@ -52,29 +55,28 @@ const LandingPage = () => {
   });
 
   return (
-    <div className="min-h-screen w-screen bg-black text-white overflow-x-hidden relative font-['General Sans'] absolute">
-      <NavBar />
+    <div className="min-h-[60vh] lg:min-h-screen w-screen bg-black text-white overflow-x-hidden relative font-['General Sans'] absolute">
       <div className="heading pl-[3vw] pt-[4rem] leading-[9vw]">
-        <div className="animetionelem w-fit   overflow-hidden">
+        <div className="animetionelem w-fit overflow-hidden ml-[5rem] lg:ml-0 ">
           <h1
             ref={h1Ref}
-            className="text-[10vw] font-semibold uppercase opacity-60 translate-y-[100%]"
+            className="text-[10vw] font-semibold uppercase opacity-60 translate-y-[100%] lg:mt"
           >
             Mern Stack
           </h1>
         </div>
         <div className="">
-          <div className="animetionelem  w-fit overflow-hidden">
+          <div className="animetionelem  w-fit overflow-hidden ml-[5rem] lg:ml-0">
             <h1
               ref={h1Ref2}
-              className="text-[10vw] font-semibold uppercase opacity-60 pl-[20vw] translate-y-[100%]"
+              className=" text-center text-[10vw] font-semibold uppercase opacity-60 lg:pl-[20vw] translate-y-[100%]"
             >
               Developer
             </h1>
           </div>
         </div>
       </div>
-      <div className="text-right pt-[3vw] pr-[2vw] font-medium w-full flex flex-col items-end">
+      <div className="text-right lg:pt-[3vw] pr-[2vw] font-medium w-full flex flex-col items-center lg:items-end mt-[7rem] lg:mt-0">
         <div className="w-fit overflow-hidden ">
           <p
             ref={pRef2}
@@ -92,11 +94,11 @@ const LandingPage = () => {
           </p>
         </div>
       </div>
-      <div className="landingFooter w-full flex justify-between px-[2vw] absolute bottom-[3%] uppercase font-semibold">
+      <div className=" mlandingFooter flex-col w-full flex lg:flex-row justify-between items-center gap-2 px-[2vw] uppercase font-semibold lg:mt-[10rem]">
         <a className="inline-block" ref={aRef} href="">
           download resume <i class="ri-arrow-right-up-line"></i>
         </a>
-        <a ref={aRef2} href="">
+        <a ref={aRef2} href="/viewproject">
           View Projects <i class="ri-arrow-right-up-line"></i>
         </a>
         <div className="flex gap-3">
@@ -108,6 +110,9 @@ const LandingPage = () => {
           </div>
         </div>
       </div>
+      <PageOne />
+      <About />
+      <Footer />
     </div>
   );
 };
