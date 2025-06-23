@@ -5,6 +5,9 @@ import gsap from "gsap";
 import PageOne from "../PageOne/PageOne";
 import About from "../About/About";
 import Footer from "../Footer/Footer";
+import RoleSlider from "../RoleSlider/RoleSlider";
+import WaveLine from "../WaveLine/WaveLine";
+import AnimatedText from "../Animations/AnimatedText";
 
 const LandingPage = () => {
   const h1Ref = useRef();
@@ -94,23 +97,27 @@ const LandingPage = () => {
           </p>
         </div>
       </div>
-      <div className=" mlandingFooter flex-col w-full flex lg:flex-row justify-between items-center gap-2 px-[2vw] uppercase font-semibold lg:mt-[10rem]">
-        <a className="inline-block" ref={aRef} href="">
-          download resume <i class="ri-arrow-right-up-line"></i>
+      <div className="mlandingFooter flex-col w-full flex lg:flex-row justify-between items-center gap-2 px-[2vw] uppercase font-semibold lg:mt-[4rem]">
+        <a className="inline-flex items-center gap-1" href="">
+          <AnimatedText>download resume</AnimatedText>
+          <i className="ri-arrow-right-up-line"></i>
         </a>
-        <a ref={aRef2} href="/viewproject">
-          View Projects <i class="ri-arrow-right-up-line"></i>
+        <a className="inline-flex items-center gap-1" href="/viewproject">
+          <AnimatedText>View Projects</AnimatedText>
+          <i className="ri-arrow-right-up-line"></i>
         </a>
         <div className="flex gap-3">
           <div className="px-[6px] py-[2px] rounded-full bg-stone-400 text-black font-semibold">
-            <i class="ri-arrow-down-line"></i>
+            <i className="ri-arrow-down-line"></i>
           </div>
           <div className="px-[6px] py-[2px] rounded-full bg-stone-400 text-black font-semibold">
-            <i class="ri-arrow-down-line"></i>
+            <i className="ri-arrow-down-line"></i>
           </div>
         </div>
       </div>
+      <WaveLine />
       <PageOne />
+      <RoleSlider />
       <About />
       <Footer />
     </div>

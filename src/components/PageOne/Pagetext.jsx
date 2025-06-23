@@ -1,13 +1,12 @@
-import { useGSAP } from "@gsap/react";
+import { useRef, useState } from "react";
 import gsap from "gsap";
-import React, { useRef, useState } from "react";
+import { useGSAP } from "@gsap/react";
 import PageHover from "./PageHover";
 import { motion } from "framer-motion";
 
 const Pagetext = () => {
   const hoverRef = useRef(null);
   const parentRef = useRef(null);
-
   const [ImageScroll, setImageScroll] = useState(0);
 
   const textArry = [
@@ -16,29 +15,45 @@ const Pagetext = () => {
     "bloggin platform",
     "animated website",
   ];
+
+  // Animate scale on mouse enter
   const mouseEnter = () => {
-    hoverRef.current.style.transform = "translate(-50%, -50%) scale(1)";
-    hoverRef.current.style.transition = ".1s all ";
+    gsap.to(hoverRef.current, {
+      scale: 1,
+      duration: 0.2,
+      ease: "power2.out",
+    });
   };
 
+  // Animate scale on mouse leave
   const mouseLeave = () => {
-    hoverRef.current.style.transform = "translate(-50%, -50%) scale(0)";
+    gsap.to(hoverRef.current, {
+      scale: 0,
+      duration: 0.2,
+      ease: "power2.out",
+    });
   };
 
-  const xValueRef = useRef(0);
-  const yValueRef = useRef(0);
+  // Set initial transform center
+  useGSAP(() => {
+    gsap.set(hoverRef.current, {
+      xPercent: -50,
+      yPercent: -50,
+    });
+  }, []);
 
+  // Move hover image on mouse move
   const mouseMove = (e) => {
-    const xvalue = e.clientX - parentRef.current.getBoundingClientRect().x;
-    const yvalue = e.clientY - parentRef.current.getBoundingClientRect().y;
-
-    xValueRef.current = xvalue;
-    yValueRef.current = yvalue;
+    const rect = parentRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
     gsap.to(hoverRef.current, {
-      top: yValueRef.current,
-      left: xValueRef.current,
-      ease: "slow(0.7,0.7,false)",
+      x,
+      y,
+      duration: 0.2,
+      ease: "power3.out",
+      overwrite: "auto",
     });
   };
 
@@ -47,19 +62,18 @@ const Pagetext = () => {
       ref={parentRef}
       onMouseEnter={mouseEnter}
       onMouseLeave={mouseLeave}
-      onMouseMove={(e) => {
-        mouseMove(e);
-      }}
+      onMouseMove={mouseMove} // ✅ Mouse move now active
       className='font-["General Sans"] relative'
     >
       <div
         ref={hoverRef}
-        className=" overflow-hidden imgdiv h-[20vw] z-10 w-[40vw] bg-stone-500 absolute -translate-x-1/2 -translate-y-1/2 scale-0"
+        className="overflow-hidden rounded-2xl shadow-xl border border-white/20 backdrop-blur-sm bg-white/10
+             transition-transform duration-200 ease-out
+             imgdiv h-[20vw] w-[40vw] z-10 absolute 
+             -translate-x-1/2 -translate-y-1/2 scale-0 pointer-events-none"
       >
         <motion.div
-          animate={{
-            transform: `translateY(-${ImageScroll}%)`,
-          }}
+          animate={{ transform: `translateY(-${ImageScroll}%)` }}
           className="h-full w-full bg-slate-700"
         >
           <img
@@ -84,17 +98,16 @@ const Pagetext = () => {
           />
         </motion.div>
       </div>
+
       <div>
-        {textArry.map((elem, index) => {
-          return (
-            <PageHover
-              key={index}
-              translate={index * 100}
-              h1={elem}
-              setImageScroll={setImageScroll}
-            />
-          );
-        })}
+        {textArry.map((elem, index) => (
+          <PageHover
+            key={index}
+            translate={index * 100}
+            h1={elem}
+            setImageScroll={setImageScroll}
+          />
+        ))}
       </div>
     </div>
   );

@@ -23,7 +23,7 @@ const PageOne = () => {
 
 
   return (
-    <div className=" w-screen mt-[6rem] pt-[9vw] pb-[2vw] text-white pl-[2vw] pr-[10vw] font-['General Sans'] mt-[19vw] lg:mt-[7rem]">
+    <div className=" w-screen  pb-[2vw] text-white pl-[2vw] pr-[10vw] font-['General Sans'] mt-[19vw] lg:mt-[7rem]">
       <Pagetext/>
       </div>
   );
