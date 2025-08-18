@@ -4,6 +4,7 @@ import mockImages from "../../_mock/mockImages";
 import mockQuotes from "../../_mock/mockQuotes";
 import mockRoles from "../../_mock/moackRoles"; // ✅ make sure file name is correct
 
+
 const WaveLine = () => {
   const canvasRef = useRef(null);
   const imageRef = useRef(null);
@@ -67,7 +68,6 @@ const WaveLine = () => {
       if (newIndex !== index) {
         setIndex(newIndex);
 
-        // Animate quote & role text change with fade & slide
         if (quoteRef.current && roleRef.current) {
           gsap.to([quoteRef.current, roleRef.current], {
             opacity: 0,
@@ -93,7 +93,6 @@ const WaveLine = () => {
         }
       }
 
-      // Animate wave
       points.current.forEach((point) => {
         gsap.killTweensOf(point);
         const dx = point.x - hoverX;
@@ -106,7 +105,6 @@ const WaveLine = () => {
         });
       });
 
-      // Animate image
       if (imageRef.current) {
         gsap.to(imageRef.current, {
           y: 0,
@@ -168,20 +166,13 @@ const WaveLine = () => {
   }, [index]);
 
   return (
-    <div className="w-full h-[60vh] mt-[10vw] relative overflow-hidden">
+    <div className="w-full h-[60vh] mt-20 relative overflow-hidden">
       {/* Image */}
       <img
         ref={imageRef}
         src={mockImages[index].src}
         alt={mockImages[index].label}
-        className="absolute top-1/2 left-1/2 z-10 pointer-events-none object-contain border-2 border-[#999999] "
-        style={{
-          transform: "translate(-50%)",
-          width: "25vw",
-          maxWidth: "200px",
-          height: "auto",
-          top:3,
-        }}
+        className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 pointer-events-none border-2 border-[#999999] object-contain w-[40vw] max-w-[180px] sm:max-w-[200px]"
       />
 
       {/* Canvas */}
@@ -190,18 +181,18 @@ const WaveLine = () => {
         className="absolute top-0 left-0 w-full h-full block z-0"
       />
 
-      {/* Quote (left) */}
+      {/* Quote */}
       <p
         ref={quoteRef}
-        className="text-white absolute left-5 top-[40%] text-lg font-medium pointer-events-none"
+        className="absolute left-4 sm:left-6 top-[40%] text-sm sm:text-base text-white font-medium pointer-events-none max-w-[60%] sm:max-w-[50%]"
       >
         {mockQuotes[1]?.text}
       </p>
 
-      {/* Role (right) */}
+      {/* Role */}
       <p
         ref={roleRef}
-        className="text-white absolute right-10 text-lg top-[52%]  font-medium pointer-events-none"
+        className="absolute right-4 sm:right-6 top-[52%] text-sm sm:text-base text-white font-medium pointer-events-none max-w-[40%]"
       >
         {mockRoles[1]?.title}
       </p>

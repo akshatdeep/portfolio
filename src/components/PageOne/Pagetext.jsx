@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import PageHover from "./PageHover";
@@ -8,12 +9,20 @@ const Pagetext = () => {
   const hoverRef = useRef(null);
   const parentRef = useRef(null);
   const [ImageScroll, setImageScroll] = useState(0);
+  const navigate = useNavigate();
 
   const textArry = [
     "RealEstate website",
     "Real Time chatapp",
     "bloggin platform",
     "animated website",
+  ];
+
+  const imageUrls = [
+    "https://res.cloudinary.com/dt85gvalz/image/upload/v1750924255/Screenshot_2024-11-26_152132_lzoxfy.png",
+    "https://res.cloudinary.com/dt85gvalz/image/upload/v1750924258/pixelcut-export_viemjd.png",
+    "https://res.cloudinary.com/dt85gvalz/image/upload/v1750924258/blog_bubizq.png",
+    "https://res.cloudinary.com/dt85gvalz/image/upload/v1750924258/animated_website.png",
   ];
 
   // Animate scale on mouse enter
@@ -57,13 +66,19 @@ const Pagetext = () => {
     });
   };
 
+  // On click handler to navigate to view project
+  const handleClick = () => {
+    navigate("/viewproject");
+  };
+
   return (
     <div
       ref={parentRef}
       onMouseEnter={mouseEnter}
       onMouseLeave={mouseLeave}
-      onMouseMove={mouseMove} // ✅ Mouse move now active
-      className='font-["General Sans"] relative'
+      onMouseMove={mouseMove}
+      onClick={handleClick}
+      className='font-["General Sans"] relative cursor-pointer'
     >
       <div
         ref={hoverRef}
@@ -76,26 +91,15 @@ const Pagetext = () => {
           animate={{ transform: `translateY(-${ImageScroll}%)` }}
           className="h-full w-full bg-slate-700"
         >
-          <img
-            className="h-full w-full object-center object-cover"
-            src="public/images/Screenshot 2024-11-26 152132.png"
-            alt=""
-          />
-          <img
-            className="h-full w-full object-cover"
-            src="public/images/pixelcut-export.png"
-            alt=""
-          />
-          <img
-            className="h-full w-full object-center object-cover"
-            src="public/images/blog.png"
-            alt=""
-          />
-          <img
-            className="h-full w-full object-cover"
-            src="https://images.unsplash.com/photo-1637747022694-92c8cbc90a38?q=80&w=1417&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            alt=""
-          />
+          {imageUrls.map((url, i) => (
+            <img
+              key={i}
+              className="h-full w-full object-center object-cover"
+              src={url}
+              alt={`project-${i}`}
+              draggable={false}
+            />
+          ))}
         </motion.div>
       </div>
 
