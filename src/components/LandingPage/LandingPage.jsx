@@ -1,14 +1,15 @@
 import React, { useRef } from "react";
-import NavBar from "../NavBar/NavBar";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+
 import PageOne from "../PageOne/PageOne";
 import About from "../About/About";
-import { useMouse } from "../../App";
-import Footer from "../Footer/Footer";
 import RoleSlider from "../RoleSlider/RoleSlider";
+import Footer from "../Footer/Footer";
 import WaveLine from "../WaveLine/WaveLine";
 import AnimatedText from "../Animations/AnimatedText";
+
+import { useMouse } from "../../App";
 
 const LandingPage = () => {
   const h1Ref = useRef();
@@ -17,6 +18,7 @@ const LandingPage = () => {
   const pRef3 = useRef();
   const aRef = useRef();
   const aRef2 = useRef();
+
   const { enlargeDot, shrinkDot } = useMouse();
 
   useGSAP(() => {
@@ -25,100 +27,126 @@ const LandingPage = () => {
     tl.to(h1Ref.current, {
       y: 0,
       duration: 0.7,
-      ease: "slow(0.7,0.7,false)",
+      ease: "slow(0.7,0.7,false)"
     });
 
     tl.to(h1Ref2.current, {
       y: 0,
       duration: 0.7,
-      ease: "slow(0.7,0.7,false)",
+      ease: "slow(0.7,0.7,false)"
     });
 
     tl.to(pRef2.current, {
       y: 0,
       duration: 0.5,
-      ease: "slow(0.7,0.7,false)",
+      ease: "slow(0.7,0.7,false)"
     });
 
     tl.to(pRef3.current, {
       y: 0,
       duration: 0.5,
-      ease: "slow(0.7,0.7,false)",
+      ease: "slow(0.7,0.7,false)"
     });
 
-    tl.from(aRef.current, {
+    tl.from([aRef.current, aRef2.current], {
       opacity: 0,
       duration: 0.5,
-      ease: "slow(0.7,0.7,false)",
-    });
-
-    tl.from(aRef2.current, {
-      opacity: 0,
-      duration: 0.5,
-      ease: "slow(0.7,0.7,false)",
+      stagger: 0.1,
+      ease: "power2.out"
     });
   });
 
   return (
     <div className="relative w-full bg-black text-white overflow-x-hidden font-['General Sans']">
-      {/* Heading Section */}
-      <div className="pt-16 px-6 lg:px-12 leading-none text-center lg:text-left">
-        <div className="overflow-hidden w-fit mx-auto lg:ml-0">
+
+      {/* =========================
+           HERO SECTION
+      ========================== */}
+      <div className="pt-24 px-6 lg:px-12 pb-8">
+
+        {/* BIG Heading 1 */}
+        <div className="overflow-hidden w-fit mx-auto lg:mx-0">
           <h1
             ref={h1Ref}
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-[9vw] font-semibold uppercase opacity-60 translate-y-full"
+            className="
+              font-semibold uppercase opacity-60 translate-y-full
+              text-5xl sm:text-7xl md:text-[10vw] lg:text-[9vw]
+            "
           >
-            Mern Stack
+            MERN Stack
           </h1>
         </div>
-        <div className="overflow-hidden w-fit mx-auto lg:ml-[20vw] mt-4">
+
+        {/* BIG Heading 2 — offset on desktop */}
+        <div className="overflow-hidden w-fit mx-auto lg:ml-[18vw] mt-4">
           <h1
             ref={h1Ref2}
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-[9vw] font-semibold uppercase opacity-60 translate-y-full"
+            className="
+              font-semibold uppercase opacity-60 translate-y-full
+              text-5xl sm:text-7xl md:text-[10vw] lg:text-[9vw]
+            "
           >
             Developer
           </h1>
         </div>
+
       </div>
 
-      {/* Subtext */}
-      <div className="text-center lg:text-right pt-12 px-6 flex flex-col items-center lg:items-end">
+      {/* =========================
+           SUB TEXT
+      ========================== */}
+      <div className="text-center lg:text-right px-6 flex flex-col items-center lg:items-end gap-2">
+
         <div className="overflow-hidden">
-          <p ref={pRef2} className="uppercase text-base translate-y-[-100%]">
+          <p
+            ref={pRef2}
+            className="uppercase text-sm sm:text-base translate-y-[-100%]"
+          >
             available for freelance
           </p>
         </div>
-        <div className="overflow-hidden mt-2">
-          <p ref={pRef3} className="uppercase text-base translate-y-[-100%]">
+
+        <div className="overflow-hidden">
+          <p
+            ref={pRef3}
+            className="uppercase text-sm sm:text-base translate-y-[-100%]"
+          >
             office opportunities
           </p>
         </div>
+
       </div>
 
-      {/* Footer Navigation Buttons */}
-      <div className="flex flex-col lg:flex-row items-center justify-between gap-4 px-6 pt-12 uppercase font-semibold">
+      {/* =========================
+           CTA BUTTONS
+      ========================== */}
+      <div className="flex flex-col lg:flex-row items-center justify-between gap-6 px-6 pt-12 uppercase font-semibold">
+
+        {/* Resume */}
         <a
           ref={aRef}
-          href=""
+          href="#"
           onMouseEnter={() => enlargeDot("")}
           onMouseLeave={shrinkDot}
-          className="inline-flex items-center gap-2 cursor-pointer"
+          className="inline-flex items-center gap-2 cursor-pointer text-sm sm:text-base"
         >
           <AnimatedText>download resume</AnimatedText>
           <i className="ri-arrow-right-up-line"></i>
         </a>
 
+        {/* View Projects */}
         <a
           ref={aRef2}
           href="/viewproject"
           onMouseEnter={() => enlargeDot("")}
           onMouseLeave={shrinkDot}
-          className="inline-flex items-center gap-2 cursor-pointer"
+          className="inline-flex items-center gap-2 cursor-pointer text-sm sm:text-base"
         >
-          <AnimatedText>View Projects</AnimatedText>
+          <AnimatedText>view projects</AnimatedText>
           <i className="ri-arrow-right-up-line"></i>
         </a>
 
+        {/* Scroll Indicators */}
         <div className="flex gap-3">
           {[...Array(2)].map((_, i) => (
             <div
@@ -127,18 +155,21 @@ const LandingPage = () => {
               onMouseEnter={() => enlargeDot("Scroll")}
               onMouseLeave={shrinkDot}
             >
-              <i className="ri-arrow-down-line"></i>
+              <i className="ri-arrow-down-line text-lg"></i>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Decorative Line and Sections */}
+      {/* =========================
+           SECTIONS BELOW HERO
+      ========================== */}
       <WaveLine />
       <PageOne />
       <RoleSlider />
       <About />
       <Footer />
+
     </div>
   );
 };

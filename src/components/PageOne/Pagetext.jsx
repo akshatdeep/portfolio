@@ -8,15 +8,9 @@ import { motion } from "framer-motion";
 const Pagetext = () => {
   const hoverRef = useRef(null);
   const parentRef = useRef(null);
-  const [ImageScroll, setImageScroll] = useState(0);
   const navigate = useNavigate();
 
-  const textArry = [
-    "RealEstate website",
-    "Real Time chatapp",
-    "bloggin platform",
-    "animated website",
-  ];
+  const [ImageScroll, setImageScroll] = useState(0);
 
   const imageUrls = [
     "https://res.cloudinary.com/dt85gvalz/image/upload/v1750924255/Screenshot_2024-11-26_152132_lzoxfy.png",
@@ -25,33 +19,41 @@ const Pagetext = () => {
     "https://res.cloudinary.com/dt85gvalz/image/upload/v1750924258/animated_website.png",
   ];
 
-  // Animate scale on mouse enter
-  const mouseEnter = () => {
-    gsap.to(hoverRef.current, {
-      scale: 1,
-      duration: 0.2,
-      ease: "power2.out",
-    });
-  };
+  const textArry = [
+    "RealEstate Website",
+    "Real Time Chat App",
+    "Blogging Platform",
+    "Animated Website"
+  ];
 
-  // Animate scale on mouse leave
-  const mouseLeave = () => {
-    gsap.to(hoverRef.current, {
-      scale: 0,
-      duration: 0.2,
-      ease: "power2.out",
-    });
-  };
-
-  // Set initial transform center
+  // initial hidden state
   useGSAP(() => {
     gsap.set(hoverRef.current, {
       xPercent: -50,
       yPercent: -50,
+      scale: 0.5,
+      opacity: 0
     });
   }, []);
 
-  // Move hover image on mouse move
+  const mouseEnter = () => {
+    gsap.to(hoverRef.current, {
+      scale: 1,
+      opacity: 1,
+      duration: 0.25,
+      ease: "power2.out",
+    });
+  };
+
+  const mouseLeave = () => {
+    gsap.to(hoverRef.current, {
+      scale: 0.5,
+      opacity: 0,
+      duration: 0.25,
+      ease: "power2.out",
+    });
+  };
+
   const mouseMove = (e) => {
     const rect = parentRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -60,16 +62,12 @@ const Pagetext = () => {
     gsap.to(hoverRef.current, {
       x,
       y,
-      duration: 0.2,
+      duration: 0.15,
       ease: "power3.out",
-      overwrite: "auto",
     });
   };
 
-  // On click handler to navigate to view project
-  const handleClick = () => {
-    navigate("/viewproject");
-  };
+  const handleClick = () => navigate("/viewproject");
 
   return (
     <div
@@ -78,32 +76,37 @@ const Pagetext = () => {
       onMouseLeave={mouseLeave}
       onMouseMove={mouseMove}
       onClick={handleClick}
-      className='font-["General Sans"] relative cursor-pointer'
+      className="relative cursor-pointer select-none"
     >
+      {/* Floating Hover Preview */}
       <div
         ref={hoverRef}
-        className="overflow-hidden rounded-2xl shadow-xl border border-white/20 backdrop-blur-sm bg-white/10
-             transition-transform duration-200 ease-out
-             imgdiv h-[20vw] w-[40vw] z-10 absolute 
-             -translate-x-1/2 -translate-y-1/2 scale-0 pointer-events-none"
+        className="
+          absolute z-10 pointer-events-none overflow-hidden
+          rounded-xl shadow-xl border border-white/20
+          backdrop-blur-lg bg-white/10 p-2
+          h-[20vw] w-[35vw]
+          md:h-[20vw] md:w-[35vw]
+          lg:h-[20vw] lg:w-[45vw]
+        "
       >
         <motion.div
           animate={{ transform: `translateY(-${ImageScroll}%)` }}
-          className="h-full w-full bg-slate-700"
+          className="h-full w-full"
         >
           {imageUrls.map((url, i) => (
             <img
               key={i}
-              className="h-full w-full object-center object-cover"
               src={url}
-              alt={`project-${i}`}
               draggable={false}
+              className="h-full w-full object-cover p-3"
             />
           ))}
         </motion.div>
       </div>
 
-      <div>
+      {/* Text List */}
+      <div className="mt-10 text-[#999999] ">
         {textArry.map((elem, index) => (
           <PageHover
             key={index}

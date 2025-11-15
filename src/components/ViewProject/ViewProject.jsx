@@ -8,17 +8,17 @@ gsap.registerPlugin(ScrollTrigger);
 
 const ViewProject = () => {
   const textRefs = useRef([]);
-  const videoRefs = useRef([]);
+  const mediaRefs = useRef([]); // renamed from videoRefs to mediaRefs (handles both img/video)
 
   textRefs.current = [];
-  videoRefs.current = [];
+  mediaRefs.current = [];
 
   const addTextRef = (el) => {
     if (el && !textRefs.current.includes(el)) textRefs.current.push(el);
   };
 
-  const addVideoRef = (el) => {
-    if (el && !videoRefs.current.includes(el)) videoRefs.current.push(el);
+  const addMediaRef = (el) => {
+    if (el && !mediaRefs.current.includes(el)) mediaRefs.current.push(el);
   };
 
   useEffect(() => {
@@ -43,18 +43,18 @@ const ViewProject = () => {
       });
     });
 
-    // Animate video
-    videoRefs.current.forEach((video) => {
-      gsap.set(video, { y: 50, opacity: 0, scale: 0.95 });
+    // Animate media (both video and image)
+    mediaRefs.current.forEach((media) => {
+      gsap.set(media, { y: 50, opacity: 0, scale: 0.95 });
 
-      gsap.to(video, {
+      gsap.to(media, {
         y: 0,
         opacity: 1,
         scale: 1,
         duration: 1,
         ease: "power3.out",
         scrollTrigger: {
-          trigger: video,
+          trigger: media,
           start: "top 85%",
           toggleActions: "play none none none",
         },
@@ -64,7 +64,7 @@ const ViewProject = () => {
 
   return (
     <div className="bg-black text-white w-full py-12 lg:pb-[9rem] md:pb-[8rem]">
-      <h1 className="text-center mt-12 lg:mt-16 uppercase font-semibold text-2xl">
+      <h1 className="text-center mt-20 lg:mt-16 uppercase font-semibold text-2xl">
         My Collection
       </h1>
 
@@ -74,21 +74,30 @@ const ViewProject = () => {
         return (
           <div
             key={index}
-            className={`flex flex-col lg:flex-row items-center mt-20 lg:mt-40 gap-6 px-6 ${
+            className={`flex flex-col lg:flex-row items-center mt-16 lg:mt-40 gap-6 px-6 ${
               !isEven ? "lg:flex-row-reverse" : ""
             }`}
           >
-            {/* Video Section */}
+            {/* Media Section */}
             <div className="w-full lg:w-1/2">
-              <video
-                ref={addVideoRef}
-                className="w-full rounded-lg object-cover"
-                autoPlay
-                loop
-                muted
-                playsInline
-                src={project.videoSrc}
-              />
+              {project.videoSrc ? (
+                <video
+                  ref={addMediaRef}
+                  className="w-full rounded-lg object-cover"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  src={project.videoSrc}
+                />
+              ) : project.imageSrc ? (
+                <img
+                  ref={addMediaRef}
+                  className="w-full rounded-lg object-cover"
+                  src={project.imageSrc}
+                  alt={project.title}
+                />
+              ) : null}
             </div>
 
             {/* Text Section */}

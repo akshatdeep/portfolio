@@ -1,19 +1,37 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // ✅ Import this
+import { useNavigate } from "react-router-dom";
+import API from "../api/axios";
 
 const AdminLogin = ({ onLogin }) => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate(); // ✅ Initialize navigator
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (username === "admin" && password === "password") {
-      onLogin();              // ✅ Mark as logged in
-      navigate("/admin");     // ✅ Redirect to admin dashboard
-    } else {
-      setError("Invalid credentials");
+    setError("");
+    setLoading(true);
+
+    try {
+      const { data } = await API.post("/auth/login", { email, password });
+
+      if (data.success) {
+        // ✅ Store token & mark as logged in
+        localStorage.setItem("adminToken", data.token);
+        onLogin();
+
+        // ✅ Redirect immediately
+        navigate("/admin", { replace: true });
+      } else {
+        setError(data.message || "Login failed");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Invalid credentials or server error");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -26,19 +44,21 @@ const AdminLogin = ({ onLogin }) => {
         <h2 className="text-2xl font-semibold mb-6 text-center">Admin Login</h2>
 
         {error && (
-          <div className="mb-4 text-red-500 text-center font-semibold">{error}</div>
+          <div className="mb-4 text-red-500 text-center font-semibold">
+            {error}
+          </div>
         )}
 
-        <label className="block mb-2 font-medium" htmlFor="username">
-          Username
+        <label className="block mb-2 font-medium" htmlFor="email">
+          Email
         </label>
         <input
-          id="username"
-          type="text"
+          id="email"
+          type="email"
           className="w-full mb-4 px-3 py-2 bg-black border border-white rounded focus:outline-none focus:ring-2 focus:ring-white"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          autoComplete="username"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          autoComplete="email"
           required
         />
 
@@ -57,9 +77,10 @@ const AdminLogin = ({ onLogin }) => {
 
         <button
           type="submit"
+          disabled={loading}
           className="w-full bg-white text-black font-semibold py-2 rounded hover:bg-gray-200 transition"
         >
-          Login
+          {loading ? "Logging in..." : "Login"}
         </button>
       </form>
     </div>

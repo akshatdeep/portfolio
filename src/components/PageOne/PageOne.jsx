@@ -1,31 +1,12 @@
-import React, { useEffect, useRef } from "react";
-import gsap from "gsap";
+import React from "react";
 import Pagetext from "./Pagetext";
-import About from "../About/About";
 
 const PageOne = () => {
-  const elemRefs = useRef([]);
-  const hoverRef = useRef();
-
-
-  const mouseEnter = () => {
-    console.log("mouse Entered")
-  }
-
-  const mouseLeave = () => {
-    console.log("mouse leave")
-  }
-
-  const mouseMoving = (e) => {
-    const xvalue = elemRefs.current.getBoundingClientRect()
-    console.log(xvalue)
-  }
-
-
   return (
-    <div className=" w-screen  pb-[2vw] text-white pl-[2vw] pr-[10vw] font-['General Sans'] mt-[19vw] lg:mt-[7rem]">
-      <Pagetext/>
-      </div>
+    <div className="w-full pb-10 text-white px-4 md:px-12 font-['General Sans'] mt-[1vw] md:mt-[7rem]">
+      <h2 className="text-center underline w-full font-semibold text-xl text-[#999999] lg:hidden">MY COLLECTION</h2>
+      <Pagetext />
+    </div>
   );
 };
 

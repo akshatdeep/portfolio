@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 
-const baseRoles = [
+const roles = [
   "Frontend Developer",
   "Backend Developer",
   "Full Stack Engineer",
@@ -9,104 +9,112 @@ const baseRoles = [
 ];
 
 const RoleSlider = () => {
-  const containerRef = useRef(null);
-  const contentRef = useRef(null);
-  const animationRef = useRef(null);
-  const scrollVelocityRef = useRef(0);
-  const directionRef = useRef(1);
-  const requestRef = useRef(null);
-  const lastScrollTimeRef = useRef(0);
+  const wrapperRef = useRef(null);
+  const track1Ref = useRef(null);
+  const track2Ref = useRef(null);
 
-  // Animation constants
-  const BASE_SPEED = 1;
-  const SCROLL_SENSITIVITY = 2;
-  const FRICTION = 0.92;
+  const speed = useRef(1);      // base auto speed
+  const scrollBoost = useRef(0); // scroll force
+  const direction = useRef(1);  // 1 = left, -1 = right
+
+  const widthRef = useRef(0);
+
+  // Position updater
+  const update = () => {
+    const totalSpeed = speed.current + scrollBoost.current;
+    const move = totalSpeed * direction.current;
+
+    track1Ref.current.x += move;
+    track2Ref.current.x += move;
+
+    const w = widthRef.current;
+
+    // LEFT LOOP
+    if (track1Ref.current.x <= -w) {
+      track1Ref.current.x = track2Ref.current.x + w;
+    }
+    if (track2Ref.current.x <= -w) {
+      track2Ref.current.x = track1Ref.current.x + w;
+    }
+
+    // RIGHT LOOP
+    if (track1Ref.current.x >= w) {
+      track1Ref.current.x = track2Ref.current.x - w;
+    }
+    if (track2Ref.current.x >= w) {
+      track2Ref.current.x = track1Ref.current.x - w;
+    }
+
+    gsap.set(track1Ref.current, { x: track1Ref.current.x });
+    gsap.set(track2Ref.current, { x: track2Ref.current.x });
+
+    // Slow down scroll boost
+    scrollBoost.current *= 0.9;
+    if (Math.abs(scrollBoost.current) < 0.02) scrollBoost.current = 0;
+  };
 
   useEffect(() => {
-    const container = containerRef.current;
-    const content = contentRef.current;
-    
-    // Create infinite content by duplicating base roles
-    const createInfiniteContent = () => {
-      const containerWidth = container.offsetWidth;
-      const itemsNeeded = Math.ceil(containerWidth / 200) * 3; // Approximate based on item width
-      let infiniteRoles = [];
-      
-      for (let i = 0; i < itemsNeeded; i++) {
-        infiniteRoles.push(...baseRoles);
-      }
-      
-      return infiniteRoles;
+    const wrapper = wrapperRef.current;
+    const t1 = track1Ref.current;
+    const t2 = track2Ref.current;
+
+    // Measure and duplicate width
+    const measureWidth = () => {
+      widthRef.current = t1.offsetWidth;
+      t1.x = 0;
+      t2.x = widthRef.current;
+      gsap.set(t1, { x: 0 });
+      gsap.set(t2, { x: widthRef.current });
     };
 
-    // Set initial content
-    content.innerHTML = createInfiniteContent()
-      .map(role => `<span class="min-w-max opacity-80 hover:opacity-100 transition-opacity duration-300 mr-10">${role}</span>`)
-      .join('');
+    measureWidth();
+    window.addEventListener("resize", measureWidth);
 
-    const contentWidth = content.scrollWidth;
-    const segmentWidth = contentWidth / 2;
-
-    // Initialize animation
-    gsap.set(content, { x: 0 });
-
-    animationRef.current = gsap.to(content, {
-      x: `-=${segmentWidth}`,
-      duration: 100,
-      ease: "none",
-      repeat: -1,
-      modifiers: {
-        x: gsap.utils.unitize((x) => parseFloat(x) % segmentWidth),
-      },
-    });
-
-    // Handle wheel events
-    const handleWheel = (e) => {
-      e.preventDefault();
-      const now = Date.now();
-      const timeDiff = now - lastScrollTimeRef.current;
-      
-      if (timeDiff > 16) { // ~60fps
-        const direction = Math.sign(e.deltaY);
-        scrollVelocityRef.current = -direction * SCROLL_SENSITIVITY;
-        lastScrollTimeRef.current = now;
-      }
+    // Scroll listener
+    const handleScroll = (e) => {
+      direction.current = e.deltaY > 0 ? -1 : 1;
+      scrollBoost.current += Math.min(Math.abs(e.deltaY) * 0.004, 2);
     };
 
-    // Apply scroll velocity
-    const applyScrollVelocity = () => {
-      if (scrollVelocityRef.current !== 0) {
-        directionRef.current = Math.sign(scrollVelocityRef.current);
-        animationRef.current.timeScale(directionRef.current * BASE_SPEED + scrollVelocityRef.current);
-        
-        scrollVelocityRef.current *= FRICTION;
-        if (Math.abs(scrollVelocityRef.current) < 0.05) {
-          scrollVelocityRef.current = 0;
-        }
-      }
-      requestRef.current = requestAnimationFrame(applyScrollVelocity);
-    };
+    wrapper.addEventListener("wheel", handleScroll, { passive: false });
 
-    container.addEventListener("wheel", handleWheel, { passive: false });
-    requestRef.current = requestAnimationFrame(applyScrollVelocity);
+    // GSAP update loop
+    gsap.ticker.add(update);
 
     return () => {
-      container.removeEventListener("wheel", handleWheel);
-      cancelAnimationFrame(requestRef.current);
-      animationRef.current?.kill();
+      gsap.ticker.remove(update);
+      wrapper.removeEventListener("wheel", handleScroll);
+      window.removeEventListener("resize", measureWidth);
     };
   }, []);
 
   return (
     <div
-      ref={containerRef}
-      className="w-full mt-10 overflow-hidden bg-black border-y border-white py-6 select-none"
+      ref={wrapperRef}
+      className="relative w-full overflow-hidden bg-black border-y border-white py-10 select-none mt-10"
     >
+      {/* Track 1 */}
       <div
-        ref={contentRef}
-        className="flex whitespace-nowrap text-white text-lg md:text-2xl font-medium px-4 will-change-transform"
+        ref={track1Ref}
+        className="absolute top-1/2 -translate-y-1/2 left-0 flex whitespace-nowrap text-white text-xl md:text-4xl font-semibold"
       >
-        {/* Content is dynamically inserted via DOM manipulation */}
+        {roles.map((r, i) => (
+          <span key={i} className="mx-10 opacity-80 hover:opacity-100 transition">
+            {r}
+          </span>
+        ))}
+      </div>
+
+      {/* Track 2 (clone) */}
+      <div
+        ref={track2Ref}
+        className="absolute top-1/2 -translate-y-1/2 left-0 flex whitespace-nowrap text-white text-xl md:text-4xl font-semibold"
+      >
+        {roles.map((r, i) => (
+          <span key={i} className="mx-10 opacity-80 hover:opacity-100 transition">
+            {r}
+          </span>
+        ))}
       </div>
     </div>
   );
