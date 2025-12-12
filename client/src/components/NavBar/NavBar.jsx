@@ -11,7 +11,7 @@ const NavBar = () => {
 
   return (
     <>
-      <div className='w-screen font-["General Sans"] py-[2vw] lg:px-[2vw] flex items-center justify-between px-[4vw]'>
+      <div className='w-screen font-["General Sans"] py-[2vw] lg:px-[2vw] bg-[#0F151A] flex items-center justify-between px-[4vw]'>
         
         {/* Logo with mouse context */}
         <div className='logo uppercase'>

@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import API from "../api/axios";
-import { io } from "socket.io-client";
 
-const socket = io("http://localhost:5000"); // your backend URL
+
 
 const AdminDashboard = () => {
   const [messages, setMessages] = useState([]);

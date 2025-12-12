@@ -23,6 +23,7 @@
     "remixicon": "^4.3.0",
     "socket.io-client": "^4.8.1",
     "split-type": "^0.3.4",
+    "styled-components": "^6.1.19",
     "tailwind-scrollbar-hide": "^4.0.0",
     "tslib": "^2.7.0"
   },

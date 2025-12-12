@@ -1,8 +1,19 @@
+// src/App.jsx
 import React, { useEffect, useState } from "react";
-import { Route, Routes, useNavigate, Navigate, useLocation } from "react-router-dom";
+import {
+  Route,
+  Routes,
+  useNavigate,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
+
+import { AnimatePresence } from "framer-motion";
 
 import Loader from "./components/Loader/Loader";
-import PageTransitionWrapper from "./components/PageTransitionWrapper/PageTransitionWrapper";
+import PageTransitionWrapper from "./components/PageTransition/PageTransition";
+import RouteTransitionManager from "./components/PageTransition/RouteTransitionManager";
+
 import LandingPage from "./components/LandingPage/LandingPage";
 import ViewProject from "./components/ViewProject/ViewProject";
 import AdminLogin from "./admin/AdminLogin";
@@ -14,10 +25,21 @@ import NotFound from "./components/NotFound/NotFound";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { MouseProvider } from "./context/MouseContext";
+import { MouseProvider, useMouse } from "./context/MouseContext";
 import CustomCursor from "./components/CustomCursor/CustomCursor";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import MainLayout from "./layout/MainLayout";
+
+function RouteResetter() {
+  const { reset } = useMouse();
+  const location = useLocation();
+
+  useEffect(() => {
+    reset();
+  }, [location.pathname, reset]);
+
+  return null;
+}
 
 function App() {
   const [loadingDone, setLoadingDone] = useState(false);
@@ -68,70 +90,77 @@ function App() {
 
       <MouseProvider>
         <CustomCursor />
+        <RouteResetter />
 
         {showLoader && <Loader onComplete={handleLoaderComplete} />}
 
         {(showContent || location.pathname !== "/") && (
           <MainLayout isLoggedIn={isLoggedIn} onLogout={handleLogout}>
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  <PageTransitionWrapper>
-                    <LandingPage />
-                  </PageTransitionWrapper>
-                }
-              />
+            {/* AnimatePresence handles page enter/exit animations.
+                RouteTransitionManager shows a quick overlay wipe when route changes. */}
+            <AnimatePresence mode="wait" initial={false}>
+              <RouteTransitionManager overlayVisibleMs={560} />
 
-              <Route
-                path="/viewproject"
-                element={
-                  <PageTransitionWrapper>
-                    <ViewProject />
-                  </PageTransitionWrapper>
-                }
-              />
+              <Routes location={location} key={location.pathname}>
+                <Route
+                  path="/"
+                  element={
+                    <PageTransitionWrapper>
+                      <LandingPage />
+                    </PageTransitionWrapper>
+                  }
+                />
 
-              <Route
-                path="/admin-login"
-                element={
-                  isLoggedIn ? (
-                    <Navigate to="/admin" replace />
-                  ) : (
-                    <AdminLogin onLogin={() => setIsLoggedIn(true)} />
-                  )
-                }
-              />
+                <Route
+                  path="/viewproject"
+                  element={
+                    <PageTransitionWrapper>
+                      <ViewProject />
+                    </PageTransitionWrapper>
+                  }
+                />
 
-              <Route
-                path="/admin"
-                element={
-                  <ProtectedRoute isLoggedIn={isLoggedIn}>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/admin-login"
+                  element={
+                    isLoggedIn ? (
+                      <Navigate to="/admin" replace />
+                    ) : (
+                      <AdminLogin onLogin={() => setIsLoggedIn(true)} />
+                    )
+                  }
+                />
 
-              <Route
-                path="/admin/change-theme"
-                element={
-                  <ProtectedRoute isLoggedIn={isLoggedIn}>
-                    <ChangeTheme />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedRoute isLoggedIn={isLoggedIn}>
+                      <AdminDashboard />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/admin/add-project"
-                element={
-                  <ProtectedRoute isLoggedIn={isLoggedIn}>
-                    <AddNewProject />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/admin/change-theme"
+                  element={
+                    <ProtectedRoute isLoggedIn={isLoggedIn}>
+                      <ChangeTheme />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+                <Route
+                  path="/admin/add-project"
+                  element={
+                    <ProtectedRoute isLoggedIn={isLoggedIn}>
+                      <AddNewProject />
+                    </ProtectedRoute>
+                  }
+                />
+
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </AnimatePresence>
           </MainLayout>
         )}
       </MouseProvider>

@@ -1,5 +1,6 @@
 import React from "react";
 import { useMouse } from "../../context/MouseContext";
+import AnimatedText from "../Animations/AnimatedText";
 
 const PageHover = ({ h1, translate, setImageScroll }) => {
   const { enlargeDot, shrinkDot } = useMouse();
@@ -21,10 +22,10 @@ const PageHover = ({ h1, translate, setImageScroll }) => {
         border-t border-gray-700 py-6
         text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 
         uppercase font-semibold text-stone-300
-        hover:text-white transition-all
+        hover:text-[#FFEE91] hover:opacity-85 duration-300 ease-in-out 
       "
     >
-      {h1}
+      <AnimatedText>{h1}</AnimatedText>
     </div>
   );
 };

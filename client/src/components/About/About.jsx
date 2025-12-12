@@ -92,7 +92,7 @@ const About = () => {
         ref={containerRef}
         className="
           w-full 
-          bg-black text-white 
+          bg-[#0F151A] text-white 
           font-['General Sans']
           flex flex-col lg:flex-row 
           items-center 

@@ -1,3 +1,4 @@
+// src/components/WaveLine/WaveLine.jsx
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import mockImages from "../../_mock/mockImages";
@@ -14,7 +15,7 @@ const WaveLine = () => {
   const baseY = useRef(0);
   const animationFrame = useRef(null);
 
-  const [index, setIndex] = useState(1); // active quote/image index
+  const [index, setIndex] = useState(1);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -27,6 +28,13 @@ const WaveLine = () => {
 
       baseY.current = canvas.height / 2;
       initPoints();
+
+      // Align image to wave baseline (baseY)
+      if (imageRef.current) {
+        imageRef.current.style.left = "50%";
+        imageRef.current.style.top = `${baseY.current}px`;
+        imageRef.current.style.transform = "translate(-50%, -50%)";
+      }
     };
 
     const initPoints = () => {
@@ -61,14 +69,11 @@ const WaveLine = () => {
 
     draw();
 
-    /* ============================
-         HOVER WAVE + ANIMATIONS
-    ============================= */
     const triggerWave = (hoverX, hoverY) => {
       const h = canvas.height;
       const centerY = baseY.current;
       const normalized = (hoverY - centerY) / (h / 2);
-      const amplitude = gsap.utils.clamp(-1, 1, normalized) * 50;
+      const amplitude = Math.max(-1, Math.min(1, normalized)) * 50;
 
       const spread = 180;
       const sigma = spread / 2;
@@ -78,10 +83,9 @@ const WaveLine = () => {
       if (newIndex !== index) {
         setIndex(newIndex);
 
-        // Enhanced fade + scale for text
         const animateTextChange = () => {
-          quoteRef.current.textContent = mockQuotes[newIndex].text;
-          roleRef.current.textContent = mockRoles[newIndex].title;
+          if (quoteRef.current) quoteRef.current.textContent = mockQuotes[newIndex].text;
+          if (roleRef.current) roleRef.current.textContent = mockRoles[newIndex].title;
 
           gsap.fromTo(
             [quoteRef.current, roleRef.current],
@@ -105,15 +109,19 @@ const WaveLine = () => {
         });
       }
 
-      // Parallax image movement
-      gsap.to(imageRef.current, {
-        y: normalized * -20,
-        rotate: normalized * 3,
-        duration: 0.4,
-        ease: "power3.out"
-      });
+      if (imageRef.current) {
+        gsap.to(imageRef.current, {
+          y: normalized * -20,
+          rotate: normalized * 3,
+          duration: 0.4,
+          ease: "power3.out",
+          onUpdate: () => {
+            // keep transform origin consistent while animating
+            imageRef.current.style.transform = `translate(-50%, -50%) translateY(${gsap.getProperty(imageRef.current, "y")}px) rotate(${gsap.getProperty(imageRef.current, "rotate")}deg)`;
+          }
+        });
+      }
 
-      // Wave ripple logic
       points.current.forEach((point) => {
         const dx = point.x - hoverX;
         const gaussian = Math.exp(-(dx * dx) / (2 * sigma * sigma));
@@ -127,9 +135,6 @@ const WaveLine = () => {
       });
     };
 
-    /* ============================
-          RESET WAVE + CONTENT
-    ============================= */
     const resetWave = () => {
       points.current.forEach((point) => {
         gsap.to(point, {
@@ -139,12 +144,19 @@ const WaveLine = () => {
         });
       });
 
-      gsap.to(imageRef.current, {
-        y: 0,
-        rotate: 0,
-        duration: 0.4,
-        ease: "power3.out"
-      });
+      if (imageRef.current) {
+        gsap.to(imageRef.current, {
+          y: 0,
+          rotate: 0,
+          duration: 0.4,
+          ease: "power3.out",
+          onComplete: () => {
+            if (imageRef.current) {
+              imageRef.current.style.transform = "translate(-50%, -50%)";
+            }
+          }
+        });
+      }
 
       gsap.to([quoteRef.current, roleRef.current], {
         y: 0,
@@ -175,28 +187,25 @@ const WaveLine = () => {
 
   return (
     <div className="w-full h-[70vh] sm:h-[60vh] mt-20 relative overflow-hidden">
-
-      {/* Floating Image with glow */}
       <img
         ref={imageRef}
         src={mockImages[index].src}
         alt={mockImages[index].label}
         className="
-          absolute 
-          top-24 sm:top-8
-          left-1/2 -translate-x-1/2 
-          z-10 pointer-events-none 
+          absolute
+          z-10 pointer-events-none
           border border-[#999] shadow-lg
-          w-[50vw] sm:w-[35vw] max-w-[180px]
+          w-[60vw] sm:w-[45vw] md:w-[35vw] lg:w-[30vw] xl:w-[22vw]
+          max-w-[300px] sm:max-w-[220px]
+          rounded-md
           transition-all duration-300
+          object-cover
         "
-        style={{ filter: "drop-shadow(0 0 8px rgba(255,255,255,0.3))" }}
+        style={{ filter: "drop-shadow(0 10px 20px rgba(0,0,0,0.25))" }}
       />
 
-      {/* Canvas */}
       <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full" />
 
-      {/* QUOTE */}
       <p
         ref={quoteRef}
         className="
@@ -207,12 +216,15 @@ const WaveLine = () => {
           text-white font-medium 
           pointer-events-none 
           max-w-[70%] sm:max-w-[50%]
+          z-20
+          hidden
+          md:inline-block
+          log:inline-block
         "
       >
         {mockQuotes[1].text}
       </p>
 
-      {/* ROLE */}
       <p
         ref={roleRef}
         className="
@@ -223,6 +235,10 @@ const WaveLine = () => {
           text-white font-medium 
           pointer-events-none 
           max-w-[40%]
+          z-20
+          hidden
+          md:inline-block
+          log:inline-block
         "
       >
         {mockRoles[1].title}

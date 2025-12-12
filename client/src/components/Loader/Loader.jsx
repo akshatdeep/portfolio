@@ -1,108 +1,165 @@
-import React, { useEffect, useRef, useState } from "react";
+// src/components/Loader/Loader.jsx
+import React, { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
+import styled from "styled-components";
 
+// only 2 greetings for fast loader
 const greetings = [
-    { lang: "English", text: "Hi" },
-    { lang: "Hindi", text: "नमस्ते" },
-    { lang: "French", text: "Bonjour" },
-    { lang: "Japanese", text: "こんにちは" },
+  { lang: "English", text: "Hi" },
+  { lang: "Hindi", text: "नमस्ते" },
 ];
 
 const Loader = ({ onComplete }) => {
-    const loaderRef = useRef(null);
-    const textRef = useRef(null);
-    const curtainRef = useRef(null);
-    const [index, setIndex] = useState(0);
+  const loaderRef = useRef(null);
+  const textRef = useRef(null);
+  const curtainRef = useRef(null);
+  const bgRef = useRef(null);
+  const cssLoaderRef = useRef(null);
+  const tlRef = useRef(null);
 
-    useEffect(() => {
-        const showGreetings = async () => {
-            const tl = gsap.timeline();
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.set(loaderRef.current, { y: 0 });
+      gsap.set(curtainRef.current, { transformOrigin: "left center", scaleX: 0 });
+      gsap.set(textRef.current, { opacity: 0, y: 12, scale: 0.99 });
+      gsap.set(bgRef.current, { opacity: 1 });
+      gsap.set(cssLoaderRef.current, { opacity: 1, scale: 1 });
 
-            // Curtain In
-            tl.fromTo(
-                curtainRef.current,
-                { scaleX: 0 },
-                {
-                    scaleX: 1,
-                    transformOrigin: "left center",
-                    duration: 1,
-                    ease: "power4.inOut",
-                }
-            );
+      const tl = gsap.timeline({
+        defaults: { ease: "power3.out" },
+        onComplete: () => {
+          if (typeof onComplete === "function") onComplete();
+        },
+      });
 
-            await delay(1200); // wait for curtain
+      tl.to(curtainRef.current, { scaleX: 1, duration: 0.55 }, 0);
+      tl.to(bgRef.current, { opacity: 0.98, duration: 0.55 }, 0);
 
-            // Loop greetings one by one manually
-            for (let i = 0; i < greetings.length; i++) {
-                gsap.to(textRef.current, {
-                    opacity: 0,
-                    duration: 0.2,
-                    onComplete: () => setIndex(i),
-                });
+      greetings.forEach((g, i) => {
+        tl.call(() => (textRef.current.textContent = g.text));
 
-                await delay(250); // wait for state update and fade out
-                gsap.to(textRef.current, {
-                    opacity: 1,
-                    duration: 0.4,
-                    ease: "power3.out",
-                });
+        tl.fromTo(
+          textRef.current,
+          { y: 14, opacity: 0, scale: 0.99, filter: "blur(3px)" },
+          { y: 0, opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.42 },
+          i === 0 ? "-=0.08" : "+=0"
+        );
 
-                await delay(1000); // keep greeting visible
-            }
+        tl.to(textRef.current, { duration: 0.55 });
+        tl.to(textRef.current, { opacity: 0, duration: 0.18 }, "+=0.02");
+      });
 
-            // Hide text
-            gsap.to(textRef.current, {
-                opacity: 0,
-                duration: 0.3,
-            });
+      tl.to(cssLoaderRef.current, { opacity: 0, duration: 0.22 });
+      tl.to(curtainRef.current, { scaleX: 0, duration: 0.48 });
 
-            await delay(300);
+      tl.to(loaderRef.current, {
+        yPercent: -110,
+        duration: 0.6,
+        ease: "power3.inOut",
+      });
 
-            // Curtain Out
-            gsap.to(curtainRef.current, {
-                scaleX: 0,
-                transformOrigin: "right center",
-                duration: 0.8,
-                ease: "power4.inOut",
-            });
+      tlRef.current = tl;
+    }, loaderRef);
 
-            await delay(900);
+    return () => {
+      tlRef.current?.kill();
+      ctx.revert();
+    };
+  }, [onComplete]);
 
-            // Slide loader up
-            gsap.to(loaderRef.current, {
-                y: "-100%",
-                duration: 1,
-                ease: "power3.inOut",
-                onComplete: () => onComplete && onComplete(),
-            });
-        };
+  return (
+    <Root ref={loaderRef}>
+      <Bg ref={bgRef} />
+      <Curtain ref={curtainRef} />
 
-        showGreetings();
-    }, [onComplete]);
-
-    const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-    return (
-        <div
-            ref={loaderRef}
-            className="fixed inset-0 z-[99999] bg-black text-white flex justify-center items-center overflow-hidden"
-        >
-            {/* Curtain */}
-            <div
-                ref={curtainRef}
-                className="absolute inset-0 bg-black origin-left z-0"
-                style={{ transform: "scaleX(0)" }}
-            />
-
-            {/* Greeting Text */}
-            <h1
-                ref={textRef}
-                className="relative z-10 text-4xl md:text-6xl font-bold font-['General Sans'] tracking-wide transition-all duration-300"
-            >
-                {greetings[index].text}
-            </h1>
-        </div>
-    );
+      <Center>
+        <Greeting ref={textRef} />
+        <StyledWrapper>
+          <span className="loader" ref={cssLoaderRef} />
+        </StyledWrapper>
+      </Center>
+    </Root>
+  );
 };
 
 export default Loader;
+
+/* ------------------- Styled Components ------------------ */
+
+const Root = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Bg = styled.div`
+  position: absolute;
+  inset: 0;
+  background: #0f151a;
+  z-index: 0;
+`;
+
+const Curtain = styled.div`
+  position: absolute;
+  inset: 0;
+  background: black;
+  z-index: 10;
+`;
+
+const Center = styled.div`
+  position: relative;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Greeting = styled.h1`
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: white;
+`;
+
+const StyledWrapper = styled.div`
+  .loader {
+    display: block;
+    width: 84px;
+    height: 84px;
+    position: relative;
+  }
+
+  .loader:before,
+  .loader:after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #fff;
+    transform: translate(-50%, -100%) scale(0);
+    animation: push_401 1.6s infinite linear;
+  }
+
+  .loader:after {
+    animation-delay: 0.8s;
+  }
+
+  @keyframes push_401 {
+    0%,
+    50% {
+      transform: translate(-50%, 0%) scale(1);
+    }
+    100% {
+      transform: translate(-50%, -100%) scale(0);
+    }
+  }
+`;

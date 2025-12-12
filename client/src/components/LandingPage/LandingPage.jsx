@@ -1,5 +1,5 @@
-import React, { useRef } from "react";
-import { useGSAP } from "@gsap/react";
+// src/components/LandingPage/LandingPage.jsx
+import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { Link } from "react-router-dom";
 
@@ -8,13 +8,49 @@ import About from "../About/About";
 import RoleSlider from "../RoleSlider/RoleSlider";
 import Footer from "../Footer/Footer";
 import WaveLine from "../WaveLine/WaveLine";
-import AnimatedText from "../Animations/AnimatedText";
+// removed AnimatedText import per request
 
 import { useMouse } from "../../context/MouseContext";
+import AnimatedText from "../Animations/AnimatedText";
+
+const createChars = (text) => Array.from(text); // preserves spaces as characters
+
+const Letters = ({ text, lettersRef, className = "" }) => {
+  const chars = createChars(text);
+  return (
+    <h1 className={`${className} inline-block`}>
+      {chars.map((ch, i) => {
+        const char = ch === " " ? "\u00A0" : ch;
+        return (
+          <span
+            key={`char-${i}-${char}`}
+            className="inline-block overflow-hidden"
+            aria-hidden="true"
+          >
+            <span
+              // inner span is the animated element; store in lettersRef.current
+              ref={(el) => {
+                if (!lettersRef.current) lettersRef.current = [];
+                lettersRef.current[i] = el;
+              }}
+              className="inline-block"
+              style={{ display: "inline-block", transform: "translateY(100%)" }}
+            >
+              {char}
+            </span>
+          </span>
+        );
+      })}
+    </h1>
+  );
+};
 
 const LandingPage = () => {
-  const h1Ref = useRef(null);
-  const h1Ref2 = useRef(null);
+  // refs for letters (arrays)
+  const letters1 = useRef([]);
+  const letters2 = useRef([]);
+
+  // refs for other hero items
   const pRef2 = useRef(null);
   const pRef3 = useRef(null);
   const aRef = useRef(null);
@@ -22,107 +58,123 @@ const LandingPage = () => {
 
   const { enlargeDot, shrinkDot } = useMouse();
 
-  // =========================
-  // GSAP HERO ANIMATIONS
-  // =========================
-  useGSAP(
-    () => {
-      const tl = gsap.timeline();
+  useEffect(() => {
+    // guard: ensure letters are mounted
+    const l1 = letters1.current || [];
+    const l2 = letters2.current || [];
+    if (l1.length === 0 && l2.length === 0) return;
 
-      tl.to(h1Ref.current, {
+    // clear previous inline styles (helpful during HMR)
+    gsap.set([...l1, ...l2, pRef2.current, pRef3.current, aRef.current, aRef2.current], {
+      clearProps: "all",
+    });
+
+    // initial visual state
+    gsap.set(l1, { yPercent: 100, opacity: 0 });
+    gsap.set(l2, { yPercent: 100, opacity: 0 });
+    gsap.set([pRef2.current, pRef3.current], { y: 12, opacity: 0 });
+    gsap.set([aRef.current, aRef2.current], { y: 6, opacity: 0, scale: 0.995 });
+
+    const tl = gsap.timeline({
+      defaults: { ease: "power3.out" },
+    });
+
+    // Wave animation: center-out stagger gives a smooth wave-like motion
+    // Adjust `each` to control speed, and overlapping negative offsets to increase fluidity.
+    tl.to(l1, {
+      yPercent: 0,
+      opacity: 1,
+      duration: 0.9,
+      stagger: { each: 0.035, from: "center" },
+    });
+
+    // start second line slightly overlapping previous for continuous flow
+    tl.to(
+      l2,
+      {
+        yPercent: 0,
+        opacity: 1,
+        duration: 0.9,
+        stagger: { each: 0.035, from: "center" },
+      },
+      "-=0.55"
+    );
+
+    // subtle reveal for subtexts (overlapping)
+    tl.to(
+      [pRef2.current, pRef3.current],
+      {
         y: 0,
-        duration: 0.7,
-        ease: "slow(0.7, 0.7, false)",
-      })
-        .to(h1Ref2.current, {
-          y: 0,
-          duration: 0.7,
-          ease: "slow(0.7, 0.7, false)",
-        })
-        .to(pRef2.current, {
-          y: 0,
-          duration: 0.5,
-          ease: "slow(0.7, 0.7, false)",
-        })
-        .to(pRef3.current, {
-          y: 0,
-          duration: 0.5,
-          ease: "slow(0.7, 0.7, false)",
-        })
-        .from([aRef.current, aRef2.current], {
-          opacity: 0,
-          duration: 0.5,
-          stagger: 0.1,
-          ease: "power2.out",
-        });
-    },
-    { dependencies: [] } // run once on mount
-  );
+        opacity: 1,
+        duration: 0.6,
+        stagger: 0.06,
+      },
+      "-=0.45"
+    );
+
+    // CTA links
+    tl.to(
+      [aRef.current, aRef2.current],
+      {
+        y: 0,
+        opacity: 1,
+        scale: 1,
+        duration: 0.55,
+        stagger: 0.08,
+      },
+      "-=0.35"
+    );
+
+    // optional: small float on entire hero after entrance to add life (comment out if unwanted)
+    // tl.to([ ...l1, ...l2 ], { yPercent: '+=2', duration: 3, yoyo: true, repeat: -1, ease: "sine.inOut", stagger: 0.01 }, "+=0.7");
+
+    // cleanup on unmount
+    return () => {
+      tl.kill();
+    };
+  }, []);
 
   return (
-    <div className="relative w-full bg-black text-white overflow-x-hidden font-['General Sans']">
-      {/* =========================
-           HERO SECTION
-      ========================== */}
+    <div className="relative w-full bg-[#0F151A] text-white overflow-x-hidden font-['General Sans']">
+      {/* HERO */}
       <div className="pt-24 px-6 lg:px-12 pb-8">
-        {/* BIG Heading 1 */}
         <div className="overflow-hidden w-fit mx-auto lg:mx-0">
-          <h1
-            ref={h1Ref}
-            className="
-              font-semibold uppercase opacity-60 translate-y-full
-              text-5xl sm:text-7xl md:text-[10vw] lg:text-[9vw]
-            "
-          >
-            MERN Stack
-          </h1>
+          <Letters
+            lettersRef={letters1}
+            text="MERN Stack"
+            className="font-semibold uppercase opacity-80 text-5xl sm:text-7xl md:text-[10vw] lg:text-[9vw]"
+          />
         </div>
 
-        {/* BIG Heading 2 — offset on desktop */}
         <div className="overflow-hidden w-fit mx-auto lg:ml-[18vw] mt-4">
-          <h1
-            ref={h1Ref2}
-            className="
-              font-semibold uppercase opacity-60 translate-y-full
-              text-5xl sm:text-7xl md:text-[10vw] lg:text-[9vw]
-            "
-          >
-            Developer
-          </h1>
+          <Letters
+            lettersRef={letters2}
+            text="Developer"
+            className="font-semibold uppercase opacity-80 text-5xl sm:text-7xl md:text-[10vw] lg:text-[9vw]"
+          />
         </div>
       </div>
 
-      {/* =========================
-           SUB TEXT
-      ========================== */}
+      {/* SUBTEXT */}
       <div className="text-center lg:text-right px-6 flex flex-col items-center lg:items-end gap-2">
         <div className="overflow-hidden">
-          <p
-            ref={pRef2}
-            className="uppercase text-sm sm:text-base translate-y-[-100%]"
-          >
+          <p ref={pRef2} className="uppercase text-sm sm:text-base">
             available for freelance
           </p>
         </div>
 
         <div className="overflow-hidden">
-          <p
-            ref={pRef3}
-            className="uppercase text-sm sm:text-base translate-y-[-100%]"
-          >
+          <p ref={pRef3} className="uppercase text-sm sm:text-base">
             office opportunities
           </p>
         </div>
       </div>
 
-      {/* =========================
-           CTA BUTTONS
-      ========================== */}
+      {/* CTAs */}
       <div className="flex flex-col lg:flex-row items-center justify-between gap-6 px-6 pt-12 uppercase font-semibold">
-        {/* Resume */}
         <a
           ref={aRef}
-          href="/akshat.pdf_20251103_115057_0000-1.pdf" // ensure this file is in /public
+          href="/akshat.pdf_20251103_115057_0000-1.pdf"
           download="Akshat_Deep_Astik_Resume.pdf"
           onMouseEnter={() => enlargeDot("Download")}
           onMouseLeave={shrinkDot}
@@ -132,10 +184,10 @@ const LandingPage = () => {
           <i className="ri-arrow-right-up-line"></i>
         </a>
 
-        {/* View Projects - SPA navigation with Link */}
         <Link
+          ref={aRef2}
           to="/viewproject"
-          replace // (optional) prevents opening new browser history entry
+          replace
           onMouseEnter={() => enlargeDot("View")}
           onMouseLeave={shrinkDot}
           className="inline-flex items-center gap-2 cursor-pointer text-sm sm:text-base"
@@ -144,13 +196,12 @@ const LandingPage = () => {
           <i className="ri-arrow-right-up-line"></i>
         </Link>
 
-        {/* Scroll Indicators */}
         <div className="flex gap-3">
           {[...Array(2)].map((_, i) => (
             <button
               key={i}
               type="button"
-              className="p-2 rounded-full bg-stone-400 text-black cursor-pointer"
+              className="px-2 py-1 rounded-full bg-stone-400 text-black cursor-pointer"
               onMouseEnter={() => enlargeDot("Scroll")}
               onMouseLeave={shrinkDot}
             >
@@ -160,9 +211,7 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* =========================
-           SECTIONS BELOW HERO
-      ========================== */}
+      {/* REST OF PAGE */}
       <WaveLine />
       <PageOne />
       <RoleSlider />

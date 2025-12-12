@@ -24,7 +24,7 @@ const MainLayout = ({ children, isLoggedIn, onLogout }) => {
   return (
     <div
       ref={scrollRef}
-      className="main min-h-screen w-full bg-black text-white overflow-hidden"
+      className="main min-h-screen w-full bg-[#0F151A] text-white overflow-hidden"
     >
       {isLoggedIn ? <AdminNav onLogout={onLogout} /> : <NavBar />}
       {children}

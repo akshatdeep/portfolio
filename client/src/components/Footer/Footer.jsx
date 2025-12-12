@@ -31,7 +31,7 @@ const Footer = () => {
   }, []);
 
   return (
-    <div className='h-[10vh] mt-[5rem] w-screen flex flex-col md:flex-row bg-black text-white font-["General Sans"] font-medium'>
+    <div className='h-[10vh] mt-[5rem] w-screen flex flex-col md:flex-row bg-[#0F151A] text-white font-["General Sans"] font-medium'>
       {/* Footer Left Section */}
       <div className="footer-left h-full w-full md:w-1/2 flex items-center gap-4 px-[2vw] justify-center md:justify-start">
         <h3>{dateTime.year} &copy;</h3>

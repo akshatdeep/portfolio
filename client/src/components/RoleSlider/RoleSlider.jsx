@@ -91,7 +91,7 @@ const RoleSlider = () => {
   return (
     <div
       ref={wrapperRef}
-      className="relative w-full overflow-hidden bg-black border-y border-white py-10 select-none mt-10"
+      className="relative w-full overflow-hidden bg-[#0F151A] border-y border-white py-10 select-none mt-10"
     >
       {/* Track 1 */}
       <div
