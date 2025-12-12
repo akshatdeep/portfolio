@@ -1,4 +1,6 @@
+// src/components/LetsTalkModal/LetsTalkModal.jsx
 import React, { useEffect, useRef, useState } from "react";
+import ReactDOM from "react-dom";
 import gsap from "gsap";
 import API from "../../api/axios";
 import { toast } from "react-toastify";
@@ -20,9 +22,20 @@ const LetsTalkModal = ({ onClose }) => {
 
     gsap.fromTo(
       panelRef.current,
-      { opacity: 0, y: 50 },
-      { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }
+      { opacity: 0, y: 30, scale: 0.985 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: "power3.out" }
     );
+
+    // focus panel (prevents scroll jump to top)
+    const prevActive = document.activeElement;
+    panelRef.current.focus({ preventScroll: true });
+
+    return () => {
+      // restore focus to previous element (good for accessibility)
+      try {
+        if (prevActive?.focus) prevActive.focus();
+      } catch (e) {}
+    };
   }, []);
 
   // Close on ESC
@@ -36,6 +49,22 @@ const LetsTalkModal = ({ onClose }) => {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [loading, onClose]);
+
+  // Lock body scroll while modal is open
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    const originalPaddingRight = document.body.style.paddingRight || "";
+    // prevent layout shift by preserving scrollbar gap if needed
+    const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+    if (scrollBarWidth > 0) {
+      document.body.style.paddingRight = `${scrollBarWidth}px`;
+    }
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      document.body.style.paddingRight = originalPaddingRight;
+    };
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,7 +88,7 @@ const LetsTalkModal = ({ onClose }) => {
       setLoading(true);
       const res = await API.post("/contact", formData);
 
-      if (res.status === 201) {
+      if (res.status === 201 || res.status === 200) {
         toast.success("Message sent successfully 🎉");
         setFormData({ name: "", email: "", message: "" });
         onClose();
@@ -81,17 +110,21 @@ const LetsTalkModal = ({ onClose }) => {
     }
   };
 
-  return (
+  // modal content
+  const modal = (
     <div
       ref={overlayRef}
       onClick={handleOverlayClick}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
+      className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80"
       aria-modal="true"
       role="dialog"
     >
       <div
         ref={panelRef}
-        className="bg-white rounded-lg max-w-md w-full p-6 relative text-black shadow-lg"
+        tabIndex={-1}
+        className="bg-white rounded-lg max-w-md w-full p-6 relative text-black shadow-xl"
+        aria-labelledby="lets-talk-title"
+        role="document"
       >
         <button
           onClick={onClose}
@@ -102,7 +135,9 @@ const LetsTalkModal = ({ onClose }) => {
           &times;
         </button>
 
-        <h2 className="text-2xl font-semibold mb-4">Let&apos;s Talk</h2>
+        <h2 id="lets-talk-title" className="text-2xl font-semibold mb-4">
+          Let&apos;s Talk
+        </h2>
 
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <input
@@ -111,7 +146,8 @@ const LetsTalkModal = ({ onClose }) => {
             placeholder="Your Name"
             value={formData.name}
             onChange={handleChange}
-            className="border border-gray-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+            className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+            aria-label="Your name"
           />
 
           <input
@@ -120,7 +156,8 @@ const LetsTalkModal = ({ onClose }) => {
             placeholder="Your Email"
             value={formData.email}
             onChange={handleChange}
-            className="border border-gray-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+            className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+            aria-label="Your email"
           />
 
           <textarea
@@ -129,16 +166,15 @@ const LetsTalkModal = ({ onClose }) => {
             rows={4}
             value={formData.message}
             onChange={handleChange}
-            className="border border-gray-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+            className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+            aria-label="Your message"
           />
 
           <button
             type="submit"
             disabled={loading}
             className={`bg-black text-white py-2 rounded font-semibold transition ${
-              loading
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-gray-900 cursor-pointer"
+              loading ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-900 cursor-pointer"
             }`}
           >
             {loading ? "Sending..." : "Send"}
@@ -147,6 +183,8 @@ const LetsTalkModal = ({ onClose }) => {
       </div>
     </div>
   );
+
+  return ReactDOM.createPortal(modal, document.body);
 };
 
 export default LetsTalkModal;

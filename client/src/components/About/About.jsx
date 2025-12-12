@@ -180,6 +180,7 @@ const About = () => {
       </section>
 
       {modalOpen && <LetsTalkModal onClose={() => setModalOpen(false)} />}
+
     </>
   );
 };
