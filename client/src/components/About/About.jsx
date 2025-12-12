@@ -106,11 +106,11 @@ const About = () => {
         <div className="flex justify-center w-full lg:w-1/2">
           <img
             ref={imgRef}
-            src="https://avatars.githubusercontent.com/u/132156274?s=400&u=7e29197823619d94b1256037b10fd0a749548379&v=4"
+            src="https://res.cloudinary.com/dt85gvalz/image/upload/v1765534376/Web_Photo_Editor_ecmgad.jpg"
             alt="Akshat Deep Astik"
             className="
               w-40 h-40 sm:w-52 sm:h-52 md:w-64 md:h-64 lg:w-72 lg:h-72 
-              rounded-full object-cover 
+              rounded-full object-cover  
               shadow-[0_0_40px_rgba(255,255,255,0.08)]
               border border-white/10
             "
