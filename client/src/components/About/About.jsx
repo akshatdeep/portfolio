@@ -46,7 +46,7 @@ const About = () => {
           repeat: -1,
           yoyo: true,
         },
-        "+=0.2" // start float a bit after entrance
+        "+=0.2" 
       );
 
       // === Split text reveal (heading) ===
@@ -135,7 +135,7 @@ const About = () => {
             teams to create something meaningful.
           </h3>
 
-          {/* Description */}
+         
           <p
             ref={textRef}
             className="text-stone-400 text-sm sm:text-base leading-relaxed"
@@ -145,7 +145,7 @@ const About = () => {
             lasts.
           </p>
 
-          {/* Premium Button */}
+         
           <button
             type="button"
             onClick={() => setModalOpen(true)}

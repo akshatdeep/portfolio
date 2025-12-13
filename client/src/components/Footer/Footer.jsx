@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import AnimatedText from "../Animations/AnimatedText";
-import { useMouse } from "../../context/MouseContext"; // ✅ adjust path as needed
+import { useMouse } from "../../context/MouseContext"; 
 
 const Footer = () => {
   const [dateTime, setDateTime] = useState({ year: "", time: "" });
-  const { enlargeDot, shrinkDot } = useMouse(); // ✅ using mouse context
+  const { enlargeDot, shrinkDot } = useMouse(); 
 
   const getISTTime = () => {
     const now = new Date();
@@ -32,13 +32,13 @@ const Footer = () => {
 
   return (
     <div className='h-[10vh] mt-[5rem] w-screen flex flex-col md:flex-row bg-[#0F151A] text-white font-["General Sans"] font-medium'>
-      {/* Footer Left Section */}
+     
       <div className="footer-left h-full w-full md:w-1/2 flex items-center gap-4 px-[2vw] justify-center md:justify-start">
         <h3>{dateTime.year} &copy;</h3>
         <h3 className="uppercase">{dateTime.time} IST</h3>
       </div>
 
-      {/* Footer Right Section */}
+     
       <div className="footer-right h-full w-full md:w-1/2 flex justify-evenly items-center uppercase mt-2 md:mt-0">
         <a
           href="https://github.com/akshatdeep"

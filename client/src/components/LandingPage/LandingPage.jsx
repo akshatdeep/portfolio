@@ -8,12 +8,12 @@ import About from "../About/About";
 import RoleSlider from "../RoleSlider/RoleSlider";
 import Footer from "../Footer/Footer";
 import WaveLine from "../WaveLine/WaveLine";
-// removed AnimatedText import per request
+
 
 import { useMouse } from "../../context/MouseContext";
 import AnimatedText from "../Animations/AnimatedText";
 
-const createChars = (text) => Array.from(text); // preserves spaces as characters
+const createChars = (text) => Array.from(text); 
 
 const Letters = ({ text, lettersRef, className = "" }) => {
   const chars = createChars(text);
@@ -28,7 +28,7 @@ const Letters = ({ text, lettersRef, className = "" }) => {
             aria-hidden="true"
           >
             <span
-              // inner span is the animated element; store in lettersRef.current
+              
               ref={(el) => {
                 if (!lettersRef.current) lettersRef.current = [];
                 lettersRef.current[i] = el;
@@ -46,11 +46,11 @@ const Letters = ({ text, lettersRef, className = "" }) => {
 };
 
 const LandingPage = () => {
-  // refs for letters (arrays)
+
   const letters1 = useRef([]);
   const letters2 = useRef([]);
 
-  // refs for other hero items
+
   const pRef2 = useRef(null);
   const pRef3 = useRef(null);
   const aRef = useRef(null);
@@ -59,17 +59,16 @@ const LandingPage = () => {
   const { enlargeDot, shrinkDot } = useMouse();
 
   useEffect(() => {
-    // guard: ensure letters are mounted
+    
     const l1 = letters1.current || [];
     const l2 = letters2.current || [];
     if (l1.length === 0 && l2.length === 0) return;
 
-    // clear previous inline styles (helpful during HMR)
+ 
     gsap.set([...l1, ...l2, pRef2.current, pRef3.current, aRef.current, aRef2.current], {
       clearProps: "all",
     });
 
-    // initial visual state
     gsap.set(l1, { yPercent: 100, opacity: 0 });
     gsap.set(l2, { yPercent: 100, opacity: 0 });
     gsap.set([pRef2.current, pRef3.current], { y: 12, opacity: 0 });
@@ -79,8 +78,7 @@ const LandingPage = () => {
       defaults: { ease: "power3.out" },
     });
 
-    // Wave animation: center-out stagger gives a smooth wave-like motion
-    // Adjust `each` to control speed, and overlapping negative offsets to increase fluidity.
+
     tl.to(l1, {
       yPercent: 0,
       opacity: 1,
@@ -88,7 +86,7 @@ const LandingPage = () => {
       stagger: { each: 0.035, from: "center" },
     });
 
-    // start second line slightly overlapping previous for continuous flow
+
     tl.to(
       l2,
       {
@@ -100,7 +98,6 @@ const LandingPage = () => {
       "-=0.55"
     );
 
-    // subtle reveal for subtexts (overlapping)
     tl.to(
       [pRef2.current, pRef3.current],
       {
@@ -112,7 +109,7 @@ const LandingPage = () => {
       "-=0.45"
     );
 
-    // CTA links
+
     tl.to(
       [aRef.current, aRef2.current],
       {
@@ -125,10 +122,7 @@ const LandingPage = () => {
       "-=0.35"
     );
 
-    // optional: small float on entire hero after entrance to add life (comment out if unwanted)
-    // tl.to([ ...l1, ...l2 ], { yPercent: '+=2', duration: 3, yoyo: true, repeat: -1, ease: "sine.inOut", stagger: 0.01 }, "+=0.7");
-
-    // cleanup on unmount
+   
     return () => {
       tl.kill();
     };
@@ -170,7 +164,7 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* CTAs */}
+  
       <div className="flex flex-col lg:flex-row items-center justify-between gap-6 px-6 pt-12 uppercase font-semibold">
         <a
           ref={aRef}
@@ -211,7 +205,7 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* REST OF PAGE */}
+
       <WaveLine />
       <PageOne />
       <RoleSlider />

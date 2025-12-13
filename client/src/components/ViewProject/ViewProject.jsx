@@ -16,7 +16,7 @@ const ViewProject = () => {
   const mediaRefs = useRef([]);
   const { enlargeDot, shrinkDot } = useMouse();
 
-  // Reset arrays each render (callback refs will push)
+
   textRefs.current = [];
   mediaRefs.current = [];
 
@@ -28,7 +28,7 @@ const ViewProject = () => {
     if (el && !mediaRefs.current.includes(el)) mediaRefs.current.push(el);
   };
 
-  // fetch projects
+
   useEffect(() => {
     let mounted = true;
     const fetchProjects = async () => {
@@ -49,13 +49,13 @@ const ViewProject = () => {
 
         if (!mounted) return;
         setProjects(mapped);
-        // keep loading true until media loaded
+   
       } catch (err) {
         console.error("Error fetching projects:", err);
         if (mounted) {
           setProjects([]);
           setLoading(false);
-          // dispatch routeReady even on error so overlay won't get stuck
+          
           requestAnimationFrame(() => window.dispatchEvent(new Event("routeReady")));
         }
       }
@@ -68,18 +68,18 @@ const ViewProject = () => {
     };
   }, []);
 
-  // wait for media to load then dispatch routeReady
+
   useEffect(() => {
     if (!projects.length) return;
 
     let cancelled = false;
 
-    // collect media elements from refs
+   
     const medias = (mediaRefs.current || []).filter(Boolean);
     if (medias.length === 0) {
-      // no media, we can consider page ready
+      
       setLoading(false);
-      // ensure paint then dispatch
+  
       requestAnimationFrame(() => {
         setTimeout(() => window.dispatchEvent(new Event("routeReady")), 40);
       });
@@ -93,7 +93,7 @@ const ViewProject = () => {
       remaining -= 1;
       if (remaining <= 0 && !cancelled) {
         setLoading(false);
-        // allow paint then dispatch readiness
+        
         requestAnimationFrame(() => {
           setTimeout(() => window.dispatchEvent(new Event("routeReady")), 40);
         });
@@ -150,12 +150,12 @@ const ViewProject = () => {
           });
         }
       } else {
-        // unknown element, treat as ready
+     
         maybeReady();
       }
     });
 
-    // safety fallback: don't let overlay hang forever
+    
     const fallback = setTimeout(() => {
       if (!cancelled) {
         console.warn("routeReady fallback fired — some media may have failed to load");
@@ -164,7 +164,7 @@ const ViewProject = () => {
           setTimeout(() => window.dispatchEvent(new Event("routeReady")), 40);
         });
       }
-    }, 4000); // 4s fallback — tune this if needed
+    }, 4000); 
 
     return () => {
       cancelled = true;
@@ -173,14 +173,14 @@ const ViewProject = () => {
     };
   }, [projects]);
 
-  // GSAP animations after projects rendered and media finished loading
+ 
   useLayoutEffect(() => {
-    if (!projects.length || loading) return; // run only when ready
+    if (!projects.length || loading) return; 
 
     const ctx = gsap.context(() => {
       const splitInstances = [];
 
-      // TEXT: split lines and animate
+      
       (textRefs.current || [])
         .filter(Boolean)
         .forEach((el) => {
@@ -208,7 +208,7 @@ const ViewProject = () => {
             });
           } catch (err) {
             console.warn("SplitType failed for element, falling back:", err);
-            // fallback animation if split fails
+          
             gsap.fromTo(
               el,
               { y: 20, opacity: 0 },
@@ -247,16 +247,16 @@ const ViewProject = () => {
           });
         });
 
-      // ensure ScrollTrigger positions are correct after media/layout settled
+      
       ScrollTrigger.refresh();
 
-      // cleanup: revert split instances and kill ScrollTriggers
+    
       return () => {
         splitInstances.forEach((s) => {
           try {
             s.revert();
           } catch (e) {
-            // ignore
+            
           }
         });
         ScrollTrigger.getAll().forEach((t) => t.kill());
@@ -266,7 +266,7 @@ const ViewProject = () => {
     return () => ctx.revert();
   }, [projects, loading]);
 
-  // Simple skeleton grid to show while loading
+  
   const SkeletonGrid = () => (
     <div className="grid grid-cols-1 gap-6 px-6 sm:grid-cols-2 lg:grid-cols-3 mt-8">
       {Array.from({ length: 6 }).map((_, i) => (
@@ -320,7 +320,7 @@ const ViewProject = () => {
                 ) : null}
               </div>
 
-              {/* Text Section */}
+           
               <div className="w-full lg:w-1/2 text-center lg:text-left">
                 <h2
                   ref={addTextRef}
@@ -339,7 +339,7 @@ const ViewProject = () => {
                   {project.description}
                 </p>
 
-                {/* GitHub Button */}
+                
                 {project.githubLink && (
                   <a
                     href={project.githubLink}

@@ -16,7 +16,7 @@ const LetsTalkModal = ({ onClose }) => {
   });
   const [loading, setLoading] = useState(false);
 
-  // Animate modal in
+
   useEffect(() => {
     if (!panelRef.current) return;
 
@@ -26,19 +26,19 @@ const LetsTalkModal = ({ onClose }) => {
       { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: "power3.out" }
     );
 
-    // focus panel (prevents scroll jump to top)
+    
     const prevActive = document.activeElement;
     panelRef.current.focus({ preventScroll: true });
 
     return () => {
-      // restore focus to previous element (good for accessibility)
+     
       try {
         if (prevActive?.focus) prevActive.focus();
       } catch (e) {}
     };
   }, []);
 
-  // Close on ESC
+  
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape" && !loading) {
@@ -50,11 +50,11 @@ const LetsTalkModal = ({ onClose }) => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [loading, onClose]);
 
-  // Lock body scroll while modal is open
+
   useEffect(() => {
     const originalOverflow = document.body.style.overflow;
     const originalPaddingRight = document.body.style.paddingRight || "";
-    // prevent layout shift by preserving scrollbar gap if needed
+
     const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
     if (scrollBarWidth > 0) {
       document.body.style.paddingRight = `${scrollBarWidth}px`;
@@ -104,13 +104,13 @@ const LetsTalkModal = ({ onClose }) => {
   };
 
   const handleOverlayClick = (e) => {
-    // Only close if click directly on dark overlay (not inside panel)
+  
     if (e.target === overlayRef.current && !loading) {
       onClose();
     }
   };
 
-  // modal content
+
   const modal = (
     <div
       ref={overlayRef}

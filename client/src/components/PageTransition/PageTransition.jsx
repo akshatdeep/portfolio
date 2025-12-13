@@ -1,12 +1,6 @@
-// src/components/PageTransition/PageTransition.jsx
-"use client";
 import React from "react";
 import { motion } from "framer-motion";
 
-/**
- * Wrap each page with this component.
- * It handles enter / exit animation for page content.
- */
 const variants = {
   initial: { opacity: 0, scale: 0.995, y: 8 },
   enter: {

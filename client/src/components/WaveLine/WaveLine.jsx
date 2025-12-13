@@ -29,7 +29,7 @@ const WaveLine = () => {
       baseY.current = canvas.height / 2;
       initPoints();
 
-      // Align image to wave baseline (baseY)
+      
       if (imageRef.current) {
         imageRef.current.style.left = "50%";
         imageRef.current.style.top = `${baseY.current}px`;
@@ -116,7 +116,7 @@ const WaveLine = () => {
           duration: 0.4,
           ease: "power3.out",
           onUpdate: () => {
-            // keep transform origin consistent while animating
+            
             imageRef.current.style.transform = `translate(-50%, -50%) translateY(${gsap.getProperty(imageRef.current, "y")}px) rotate(${gsap.getProperty(imageRef.current, "rotate")}deg)`;
           }
         });

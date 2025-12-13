@@ -107,6 +107,7 @@ const CustomCursor = () => {
   }, []);
 
   return (
+     <div className="hidden md:block">
     <div
       ref={dotRef}
       className="fixed top-0 left-0 z-[9999] rounded-full mix-blend-difference flex items-center justify-center text-black pointer-events-none"
@@ -115,7 +116,10 @@ const CustomCursor = () => {
       <div
         ref={circleRef}
         className="w-full h-full rounded-full flex items-center justify-center bg-white"
-        style={{ transformOrigin: "center center", willChange: "transform, background-color" }}
+        style={{
+          transformOrigin: "center center",
+          willChange: "transform, background-color",
+        }}
       />
       <span
         ref={labelRef}
@@ -125,6 +129,7 @@ const CustomCursor = () => {
         {isEnlarged ? hoverText : null}
       </span>
     </div>
+  </div>
   );
 };
 

@@ -3,17 +3,17 @@ import 'remixicon/fonts/remixicon.css';
 import { Link } from "react-router-dom";
 import AnimatedText from "../Animations/AnimatedText";
 import NavMenuSlider from "./NavMenuSlider";
-import { useMouse } from "../../context/MouseContext"; // 👈 Import context
+import { useMouse } from "../../context/MouseContext";
 
 const NavBar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { enlargeDot, shrinkDot } = useMouse(); // 👈 Use context methods
+  const { enlargeDot, shrinkDot } = useMouse();
 
   return (
     <>
       <div className='w-screen font-["General Sans"] py-[2vw] lg:px-[2vw] bg-[#0F151A] flex items-center justify-between px-[4vw]'>
-        
-        {/* Logo with mouse context */}
+
+
         <div className='logo uppercase'>
           <div
             className="animetionemem w-fit overflow-hidden cursor-pointer"
@@ -30,14 +30,14 @@ const NavBar = () => {
           </div>
         </div>
 
-        {/* Menu trigger with mouse context */}
+
         <div className='menu'>
           <div className="w-fit overflow-hidden">
             <h3
               className='uppercase font-semibold flex items-center gap-2 cursor-pointer'
               onClick={() => setMenuOpen(true)}
-              onMouseEnter={() => enlargeDot("")} 
-              onMouseLeave={shrinkDot} 
+              onMouseEnter={() => enlargeDot("")}
+              onMouseLeave={shrinkDot}
             >
               <AnimatedText>menu</AnimatedText>
               <span className='font-normal text-gray-400'>
@@ -48,11 +48,11 @@ const NavBar = () => {
         </div>
       </div>
 
-      {/* Menu Slider */}
+
       <NavMenuSlider
         isOpen={menuOpen}
         onClose={() => setMenuOpen(false)}
-        enlargeDot={enlargeDot}  // pass down context methods
+        enlargeDot={enlargeDot}
         shrinkDot={shrinkDot}
       />
     </>

@@ -26,7 +26,7 @@ const Pagetext = () => {
     "Ochi Clone"
   ];
 
-  // initial hidden state
+
   useGSAP(() => {
     gsap.set(hoverRef.current, {
       xPercent: -50,

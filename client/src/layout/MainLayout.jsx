@@ -19,7 +19,7 @@ const MainLayout = ({ children, isLoggedIn, onLogout }) => {
     });
 
     return () => scroll.destroy();
-  }, [location.pathname]); // re-init when route changes
+  }, [location.pathname]); 
 
   return (
     <div

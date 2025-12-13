@@ -3,7 +3,7 @@ import React, { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import styled from "styled-components";
 
-// only 2 greetings for fast loader
+
 const greetings = [
   { lang: "English", text: "Hi" },
   { lang: "Hindi", text: "नमस्ते" },
@@ -84,7 +84,6 @@ const Loader = ({ onComplete }) => {
 
 export default Loader;
 
-/* ------------------- Styled Components ------------------ */
 
 const Root = styled.div`
   position: fixed;

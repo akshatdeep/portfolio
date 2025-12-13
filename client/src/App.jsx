@@ -1,4 +1,3 @@
-// src/App.jsx
 import React, { useEffect, useState } from "react";
 import {
   Route,
@@ -59,7 +58,7 @@ function App() {
     localStorage.setItem("admin_token", isLoggedIn ? "true" : "false");
   }, [isLoggedIn]);
 
-  // loader + body overflow
+
   useEffect(() => {
     if (location.pathname === "/") {
       document.body.style.overflow = showContent ? "auto" : "hidden";
@@ -96,8 +95,7 @@ function App() {
 
         {(showContent || location.pathname !== "/") && (
           <MainLayout isLoggedIn={isLoggedIn} onLogout={handleLogout}>
-            {/* AnimatePresence handles page enter/exit animations.
-                RouteTransitionManager shows a quick overlay wipe when route changes. */}
+           
             <AnimatePresence mode="wait" initial={false}>
               <RouteTransitionManager overlayVisibleMs={560} />
 

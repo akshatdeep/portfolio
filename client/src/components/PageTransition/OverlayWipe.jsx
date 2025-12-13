@@ -1,16 +1,11 @@
-// src/components/PageTransition/OverlayWipe.jsx
-"use client";
 import React from "react";
 import { motion } from "framer-motion";
 
-/**
- * Full-screen black wipe used between routes.
- * pointer-events-none prevents it blocking clicks (remove if you want blocking).
- */
+
 const overlayVariants = {
-  initial: { y: "100%" },   // off-screen bottom
+  initial: { y: "100%" },  
   animate: { y: "0%", transition: { duration: 0.28, ease: "easeInOut" } },
-  exit: { y: "-100%", transition: { duration: 0.28, ease: "easeInOut" } }, // out to top
+  exit: { y: "-100%", transition: { duration: 0.28, ease: "easeInOut" } }, 
 };
 
 export default function OverlayWipe({ keyId }) {
